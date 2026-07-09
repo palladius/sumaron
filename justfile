@@ -9,6 +9,9 @@ default: build
 # Build the sumaron binary
 build:
     go build -o bin/sumaron main.go
+    @echo "Updating user manual on obsidian..."
+    mkdir -p {{env_var("HOME")}}/obsidian-pbt/Wiki/UserManuals
+    cp docs/USER_MANUAL.md {{env_var("HOME")}}/obsidian-pbt/Wiki/UserManuals/Sumaron.md
 
 # Install the sumaron binary to ~/bin
 install: build

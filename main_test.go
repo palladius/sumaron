@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -180,5 +181,59 @@ func TestComputeDirectoryHashLimits(t *testing.T) {
 	}
 	if len(fileListMax) != 1 {
 		t.Errorf("expected max 1 file, got %d: %v", len(fileListMax), fileListMax)
+	}
+}
+
+func TestWriteSummaryMarkdownWithVisuals(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "sumaron-markdown-test")
+	if err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// 1. Without images
+	writeSummaryMarkdown(tmpDir, "This is a summary without images.", "test-model", []string{filepath.Join(tmpDir, "README.md")})
+
+	summaryFile := filepath.Join(tmpDir, "sumaron-summary.md")
+	content, err := os.ReadFile(summaryFile)
+	if err != nil {
+		t.Fatalf("failed to read summary markdown: %v", err)
+	}
+
+	if !strings.Contains(string(content), "sumaron_version: 0.2.0") {
+		t.Errorf("expected version 0.2.0 in frontmatter, got:\n%s", string(content))
+	}
+	if strings.Contains(string(content), "assets/logo.png") {
+		t.Errorf("expected no logo reference, got:\n%s", string(content))
+	}
+
+	// 2. With images created in assets/
+	assetsDir := filepath.Join(tmpDir, "assets")
+	if err := os.MkdirAll(assetsDir, 0755); err != nil {
+		t.Fatalf("failed to create assets dir: %v", err)
+	}
+	_ = os.WriteFile(filepath.Join(assetsDir, "logo.png"), []byte("fakelogo"), 0644)
+	_ = os.WriteFile(filepath.Join(assetsDir, "arch_diagram.png"), []byte("fakearch"), 0644)
+	_ = os.WriteFile(filepath.Join(assetsDir, "er_diagram.png"), []byte("fakeer"), 0644)
+
+	writeSummaryMarkdown(tmpDir, "This is a summary with all visuals.", "test-model", []string{filepath.Join(tmpDir, "README.md")})
+
+	contentWithVisuals, err := os.ReadFile(summaryFile)
+	if err != nil {
+		t.Fatalf("failed to read summary markdown: %v", err)
+	}
+
+	contentStr := string(contentWithVisuals)
+	if !strings.Contains(contentStr, "assets/logo.png") {
+		t.Errorf("expected logo embedded in markdown, got:\n%s", contentStr)
+	}
+	if !strings.Contains(contentStr, "assets/arch_diagram.png") {
+		t.Errorf("expected arch diagram embedded in markdown, got:\n%s", contentStr)
+	}
+	if !strings.Contains(contentStr, "assets/er_diagram.png") {
+		t.Errorf("expected er diagram embedded in markdown, got:\n%s", contentStr)
+	}
+	if !strings.Contains(contentStr, "images:\n  - assets/logo.png") {
+		t.Errorf("expected images listed in YAML frontmatter, got:\n%s", contentStr)
 	}
 }

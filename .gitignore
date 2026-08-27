@@ -1,3 +1,5 @@
 bin/
 .sumaron.json
 sumaron-summary.md
+.env
+.DS_Store

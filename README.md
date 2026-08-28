@@ -42,6 +42,10 @@ The name **Sumaron** is a humorous pun and homage to *"Il signore dei Tarzanelli
 
 ## Architecture & Workflow Diagram 🏗️
 
+<p align="center">
+  <img src="https://github.com/palladius/sumaron/blob/main/assets/arch_diagram.png?raw=true" alt="Sumaron Architecture Diagram" width="800" />
+</p>
+
 ```mermaid
 flowchart TD
     Start([Run sumaron]) --> Scan[Scan Directory & Collect Target Files]

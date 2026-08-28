@@ -1,39 +1,97 @@
 # SUMARON 🐴👁️
 
-A folder-based summarization tool powered by LLMs, designed to be fast and cache-efficient. 
+<p align="center">
+  <img src="https://github.com/palladius/sumaron/blob/main/assets/eye_of_sumaron.jpg" alt="Eye of Sumaron" width="320" />
+</p>
 
-The name **Sumaron** is a humorous pun: "Sumar" means donkey (somaro) in the Ferrarese/Emilian dialect, and "-on" is the augmentative suffix (making it "Big Donkey"), which phonetically sounds like Sauron, the Dark Lord of Mordor.
+> **The Big Donkey of Folder Summarization** 🌋🐴  
+> *Fast, cache-efficient directory summarizer powered by Google Gemini and Imagen.*
 
----
-
-## Logo / Mascot Candidates 🎨
-
-Here are 3 options for the project's mascot/logo. Click the links below to view the images:
-
-### Option 1: The Dark Lord Donkey
-* **Mascot Concept**: Sauron reimagined as a majestic donkey wearing spiked dark metal armor standing in Mordor, with a donkey-shaped Eye of Sauron in the sky.
-* **Image File**: [sumaron_dark_lord.jpg](assets/sumaron_dark_lord.jpg)
-* **Prompt**:
-  > A funny high-fantasy digital art piece of Sauron from Lord of the Rings, but reimagined as a donkey. The donkey is wearing spiked dark metal armor like Sauron, standing dramatically on a volcanic ridge under a red-orange sky of Mordor. In the background, the glowing fiery Eye of Sauron is shaped like a giant donkey's head with long ears, casting a comedic red light on the volcanic ash landscape.
-
-### Option 2: The Eye of Sumaron
-* **Mascot Concept**: Barad-dûr with a giant, goofy, wide-eyed donkey eye looking around from the top.
-* **Image File**: [eye_of_sumaron.jpg](assets/eye_of_sumaron.jpg)
-* **Prompt**:
-  > A comedic high-fantasy illustration of the dark tower Barad-dur, but instead of the terrifying Eye of Sauron, the giant glowing eye at the top of the tower is a hilarious, wide-eyed cartoonish donkey eye looking around. The scene is dramatic with dark clouds, volcanic smoke, and glowing red lava, but the funny donkey eye makes it absurd and lighthearted.
-
-### Option 3: Sumaron's Feast
-* **Mascot Concept**: Sumaron the donkey sitting on a dark lord throne eating traditional Ferrarese food (*cappellacci di zucca* and *Coppia Ferrarese* bread).
-* **Image File**: [sumaron_throne.jpg](assets/sumaron_throne.jpg)
-* **Prompt**:
-  > A funny digital painting of a donkey sitting on a dark, imposing dark lord throne inside a volcanic castle hall. The donkey is wearing a spiky dark metal crown/helmet. On its lap is a plate of cappellacci di zucca (pumpkin pasta) and it is happily chewing on a piece of traditional Coppia Ferrarese bread. Fiery lava rivers glow in the background.
+The name **Sumaron** is a humorous pun and homage to *"Il signore dei Tarzanelli"* (the legendary Lord of the Rings parody/revival in Ferrarese dialect): *"Sumar"* means donkey (*somaro* / *sumàr*) in the Ferrarese/Emilian dialect, and *"-on"* is the augmentative suffix ("Big Donkey"), which phonetically doubles as **Sauron**, the Dark Lord of Mordor.
 
 ---
 
-## Project Goal
-I want to create a summarizer called SUMARON which summarizes via LLM a folder. Since this takes time, it will leave a `.sumaron.json` which contains a timestamp of summarization and some sort of md5 of the summarized content. The timestamp + hash should allow the system to know if we need to re-summarize it.
+## What Sumaron Does 🚀
 
-It uses `GEMINI_API_KEY` from the environment; if not found, it complains and asks for either the env var or the `--key KEY` option (with `--help` support). It will track the summarized folders in a determined place, e.g., `~/.sumaron-cache.json` or `~/.sumaron/` if it's more complex.
+`sumaron` inspects, hashes, and summarizes any project folder or codebase using Google Gemini. Because LLM processing takes time and API quota, Sumaron is built around **strict, dual-layer caching** and automated visual documentation.
 
-Since LLMs are slow, it is absolutely fundamental that we do NOT repeat the same operation twice, so if it is called a second time, it should say "cache hit" and replicate the result. Finally, we will support only a select number of formats, e.g., `.md`, `.html`, and `.json` to start with.
+### Key Capabilities
+
+1. **📁 Smart Directory Scanning**:
+   - Recursively walks target directories and gathers text-based documentation and source files (defaults: `.md`, `.html`, `.json`).
+   - Configurable recursion depth (`--max-depth`) and file limit capping (`--max-files`) to prevent overwhelming context limits.
+
+2. **⚡ Deterministic Two-Tier Caching**:
+   - Computes a deterministic MD5 hash across all sorted file contents and paths.
+   - Checks both local folder cache (`.sumaron.json`) and a central user registry (`~/.sumaron-cache.json`).
+   - On a cache hit, returns the existing summary instantly without making repeated LLM API calls.
+
+3. **🧠 AI-Powered Summarization**:
+   - Sends file contents to Google Gemini (`gemini-flash-latest` by default).
+   - Generates an executive summary, architecture overview, and structured file breakdown.
+
+4. **🎨 Automated Visual Architecture & Branding**:
+   - Automatically generates project diagrams using Google Imagen (`assets/logo.png`, `assets/arch_diagram.png`, `assets/er_diagram.png`).
+   - Seamlessly embeds visual assets into markdown summaries.
+
+5. **📄 Standardized Output**:
+   - Writes `sumaron-summary.md` with complete YAML frontmatter (version, date, file list, asset links, model details).
+   - Prints styled, colorful terminal output using Lip Gloss.
+
+---
+
+## Architecture & Workflow Diagram 🏗️
+
+```mermaid
+flowchart TD
+    Start([Run sumaron]) --> Scan[Scan Directory & Collect Target Files]
+    Scan --> Hash[Compute Deterministic MD5 Hash]
+    Hash --> CacheCheck{Cache Hit?<br/>.sumaron.json / central cache}
+    
+    CacheCheck -- YES --> ReadCache[Read & Display Cached Summary]
+    ReadCache --> Done([Finish])
+    
+    CacheCheck -- NO --> CallGemini[Call Gemini API<br/>Generate Structured Summary]
+    CallGemini --> CheckImages{Images Missing?}
+    CheckImages -- YES --> CallImagen[Generate Diagrams with Imagen<br/>arch_diagram.png, er_diagram.png, logo.png]
+    CheckImages -- NO --> WriteSummary
+    CallImagen --> WriteSummary[Write sumaron-summary.md<br/>with YAML Frontmatter & Assets]
+    WriteSummary --> UpdateCache[Update Local & Central Caches]
+    UpdateCache --> PrintOut[Render Styled Terminal Output]
+    PrintOut --> Done
+```
+
+---
+
+## Quick Start ⚡
+
+### Installation
+
+```bash
+# Build and install to ~/bin
+just build
+just install
+```
+
+### Usage
+
+Ensure `GEMINI_API_KEY` is set in your environment:
+
+```bash
+export GEMINI_API_KEY="your-gemini-api-key"
+
+# Summarize the current folder
+sumaron
+
+# Summarize a specific directory
+sumaron --folder /path/to/project
+
+# Customize extensions, depth, and file count
+sumaron -f . -e ".go,.md,.proto" --max-depth 3 --max-files 50
+
+# Bypass cache and force re-summarization
+sumaron --force
+```
+
+For complete documentation on all flags, environmental variables, and caching internals, see the [User Manual](docs/USER_MANUAL.md).
 

@@ -31,8 +31,8 @@ The name **Sumaron** is a humorous pun and homage to *"Il signore dei Tarzanelli
    - Generates an executive summary, architecture overview, and structured file breakdown.
 
 4. **🎨 Automated Visual Architecture & Branding**:
-   - Automatically generates project diagrams using Google Imagen (`assets/logo.png`, `assets/arch_diagram.png`, `assets/er_diagram.png`).
-   - Seamlessly embeds visual assets into markdown summaries.
+   - Automatically generates project diagrams and logos using Google Imagen (see examples generated directly for this repository: [`assets/logo.png`](assets/logo.png), [`assets/arch_diagram.png`](assets/arch_diagram.png), and [`assets/er_diagram.png`](assets/er_diagram.png)).
+   - Seamlessly embeds visual assets into markdown summaries (`sumaron-summary.md`).
 
 5. **📄 Standardized Output**:
    - Writes `sumaron-summary.md` with complete YAML frontmatter (version, date, file list, asset links, model details).

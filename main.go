@@ -670,7 +670,7 @@ func generateProjectImages(ctx context.Context, apiKey, imageModel, absDir, summ
 			path:  erPath,
 			emoji: "📊",
 			prompt: fmt.Sprintf(
-				"A modern, clear entity-relationship and code structure diagram for '%s' (%s). Showing software entities, structs, classes, modules, and their relationships with clean connecting lines and schema boxes on a modern technical background. Polished developer documentation infographic.",
+				"A high-tech, crystal-clear, elegant software Entity-Relationship and data model diagram for '%s' (%s). Displays structured schema boxes, key-value dictionaries, structs/entities, and filesystem integration on a dark navy/slate technical background with clean connecting lines, database relation links, glowing neon accents, and crisp developer UI typography.",
 				projectName, cleanSummary,
 			),
 		},
